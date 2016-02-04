@@ -1,0 +1,37 @@
+{
+	"manifest_version": 2,
+	"name": "DogFood - Track your childs meals",
+	"short_name": "DogFood",
+	"author": "Caley Woods",
+	"description": "Track the breakfast and lunch meals of your child",
+	"version": "0.0.3",
+	"content_scripts": [
+		{
+			"matches": [
+				"*://*.sisk12.brookfield.k12.mo.us/BD/Portal/Parent/*"
+			],
+			"js": [
+				"lib/jquery-2.1.4.min.js",
+				"lib/jquery-ui.min.js",
+				"lib/moment.min.js",
+				"lib/fullcalendar.min.js",
+				"main.js"
+			],
+			"css": [
+				"css/jquery-ui.min.css",
+				"css/jquery-ui.structure.min.css",
+				"css/jquery-ui.theme.min.css",
+				"css/fullcalendar.min.css",
+				"css/style.css"
+			]
+		}
+	],
+	"browser_action": {
+		"default_icon": "icon.png",
+		"default_popup": "popup.html"
+	},
+	"permissions": [
+		"activeTab",
+		"*://*.sisk12.brookfield.k12.mo.us/BD/Portal/Parent/*"
+	]
+}
