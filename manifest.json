@@ -4,11 +4,11 @@
 	"short_name": "DogFood",
 	"author": "Caley Woods",
 	"description": "Track the breakfast and lunch meals of your child",
-	"version": "0.0.3",
+	"version": "0.0.4",
 	"content_scripts": [
 		{
 			"matches": [
-				"*://*.sisk12.brookfield.k12.mo.us/BD/Portal/Parent/*"
+				"*://*.sisk12.brookfield.k12.mo.us/BD360/apphost/TylerSis#/mealService*"
 			],
 			"js": [
 				"lib/jquery-2.1.4.min.js",
@@ -32,6 +32,6 @@
 	},
 	"permissions": [
 		"activeTab",
-		"*://*.sisk12.brookfield.k12.mo.us/BD/Portal/Parent/*"
+		"*://*.sisk12.brookfield.k12.mo.us/BD360/apphost/TylerSis#/mealService*"
 	]
 }

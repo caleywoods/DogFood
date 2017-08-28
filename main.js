@@ -1,11 +1,42 @@
-function getMeals() {
-    var mealsTable  = $( '#ctl00_ContentPlaceHolder1_dgLunch > tbody > tr' ),
-        dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+getMeals() => {
+    // var mealsTable  = $( '#ctl00_ContentPlaceHolder1_dgLunch > tbody > tr' ),
+    let mealsTable  = $( '.divScrollable > table');
+    let rows        = $('.scroll > table > tbody > tr > td').toArray();
+
+    /* The first element is the header, we don't care about it, shift removes it
+     * and is destructive so rows then contains N - 1 elements.
+     */
+    rows.shift();
+
+    rows.forEach((row) => {
+      // This spits out 10 td's for every date shown on the page
+      /*
+      [0] is breakfast meal charge
+      [1] is breakfast a la carte (not available until High School)
+      [2] is lunch meal charge
+      [3] is lunch a la carte (not available until High School)
+      [4] is snack meal charge (not used past pre school?)
+      [5] is snack a la carte ( not used past pre school?)
+      [6] is deposits
+      [7] is total purchases (on the day)
+      [8] is net (don't care)
+      [9] is balance
+      */
+      console.log( $(row).find('td') );
+    })
+
+    // mealsTable[0].children contains all meal rows
+    // Replace the div id divChargesDeposits element with our calendar
+    let dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
 
     // Remove the first element which is the table header
     mealsTable = mealsTable.slice( 1,mealsTable.length );
     mealEvents = [];
 
+    // Show innerText of each table row
+    // for ( let i = 0, len = rows.length; i < len; i++ ) {
+    //   console.log( rows[i].innerText );
+    // }
     mealsTable.each( function(idx, meal) {
         /* Turn each row into an indexable array element
          * [0] is the school (BDES = Elementary, BDHS = High School)
@@ -59,7 +90,7 @@ function getMeals() {
             depositEvent.start  = moment( mealDate );
             depositEvent.title  = "Deposit - $" + deposit.toFixed( 2 );
 
-            mealEvents.push( depositEvent );            
+            mealEvents.push( depositEvent );
         }
     });
 
@@ -70,9 +101,9 @@ function getMeals() {
         balanceAmt   = Number( balance.replace('$', '') ).toFixed( 2 ),
         balanceEvent = {};
 
-    balanceEvent.allDay = true; 
+    balanceEvent.allDay = true;
     balanceEvent.color  = '#0000ff';
-    balanceEvent.start  = moment().format(); 
+    balanceEvent.start  = moment().format();
     balanceEvent.title  = "Balance - " + balance;
 
     if ( balanceAmt < 5 ) {
@@ -84,7 +115,7 @@ function getMeals() {
     return mealEvents;
 }
 
-function createCalendarDiv() {
+createCalendarDiv() => {
     var calendarDiv  = document.createElement( 'DIV' );
 
     calendarDiv.id  = "calendar";
@@ -94,7 +125,7 @@ function createCalendarDiv() {
     createFullCalendar();
 }
 
-function createFullCalendar() {
+createFullCalendar() => {
     var meals = getMeals();
 
     // Hide the default grid so our calendar renders at the top
@@ -110,8 +141,8 @@ function createFullCalendar() {
         editable: false,
         events: meals,
         weekends:false
-    }); 
+    });
 }
 
 // Execute createCalendarDiv() on DOM ready
-$( document ).ready(function() { createCalendarDiv(); });
+$( document ).ready(() => { createCalendarDiv(); });
