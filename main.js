@@ -1,135 +1,109 @@
-getMeals() => {
-    // var mealsTable  = $( '#ctl00_ContentPlaceHolder1_dgLunch > tbody > tr' ),
-    let mealsTable  = $( '.divScrollable > table');
-    let rows        = $('.scroll > table > tbody > tr > td').toArray();
-
-    /* The first element is the header, we don't care about it, shift removes it
-     * and is destructive so rows then contains N - 1 elements.
-     */
-    rows.shift();
+function getMeals() {
+    let rows       = $( '.tableOddRow, .tableEvenRow' ).toArray();
+    let re         = /[\n\r]+/;
+    let mealEvents = [];
 
     rows.forEach((row) => {
-      // This spits out 10 td's for every date shown on the page
-      /*
-      [0] is breakfast meal charge
-      [1] is breakfast a la carte (not available until High School)
-      [2] is lunch meal charge
-      [3] is lunch a la carte (not available until High School)
-      [4] is snack meal charge (not used past pre school?)
-      [5] is snack a la carte ( not used past pre school?)
-      [6] is deposits
-      [7] is total purchases (on the day)
-      [8] is net (don't care)
-      [9] is balance
-      */
-      console.log( $(row).find('td') );
-    })
+      /* This splits row via the carriage return which gives us a 2 element
+       * array in the form of:
+       * ["Mon	08/28/17	", "1.15	0.00	1.45	0.00	0.00	0.00	6.00	2.60	3.40	6.20"]
+       *
+       * Each piece of data in each element is seperated by a tab character.
+       */
+      let rowArr = row.innerText.split( re );
 
-    // mealsTable[0].children contains all meal rows
-    // Replace the div id divChargesDeposits element with our calendar
-    let dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      /* This breaks the first element into a 3 element array in the form of:
+       * ["Mon", "08/28/17", ""]
+       *
+       * index 1 contains the date we need for moment
+       */
+      let mealDate = rowArr[0].split('	')[1];
 
-    // Remove the first element which is the table header
-    mealsTable = mealsTable.slice( 1,mealsTable.length );
-    mealEvents = [];
+      /* This breaks the second element into a 10 element array in the form of:
+       * ["1.15", "0.00", "1.45", "0.00", "0.00", "0.00", "6.00", "2.60", "3.40", "6.20"]
+       *
+       * [0] is breakfast meal charge
+       * [1] is breakfast a la carte (not available until High School)
+       * [2] is lunch meal charge
+       * [3] is lunch a la carte (not available until High School)
+       * [4] is snack meal charge (not used past pre school?)
+       * [5] is snack a la carte ( not used past pre school?)
+       * [6] is deposits
+       * [7] is total purchases (on the day)
+       * [8] is net (don't care)
+       * [9] is balance
+       */
+      let transactionDetails = rowArr[1].split('	'); //fuck your tab character.
 
-    // Show innerText of each table row
-    // for ( let i = 0, len = rows.length; i < len; i++ ) {
-    //   console.log( rows[i].innerText );
-    // }
-    mealsTable.each( function(idx, meal) {
-        /* Turn each row into an indexable array element
-         * [0] is the school (BDES = Elementary, BDHS = High School)
-         * [1] is the date
-         * [2] is breakfast charge
-         * [3] is lunch charge
-         * [4] is snack milk charge
-         * [5] is deposit
-         */
-        var detailArray     = meal.innerText.split('    '),
-            mealDate        = new Date( detailArray[1] ),
-            breakfastCharge = Number( detailArray[2] ),
-            lunchCharge     = Number( detailArray[3] ),
-            deposit         = Number( detailArray[5] ),
-            mealEvent       = {};
+      let breakfastCharge = Number( transactionDetails[0] );
+      let lunchCharge     = Number( transactionDetails[2] );
+      let deposit         = Number( transactionDetails[6] );
+      let dailyBalance    = Number( transactionDetails[9] );
 
-        if ( breakfastCharge > 0 ) {
-            mealEvent.title = "Breakfast - $" + breakfastCharge.toFixed( 2 );
-            mealEvent.start = moment( mealDate );
-            mealEvent.end   = moment( mealDate );
+      if ( breakfastCharge > 0 ) {
+        let breakfastEvent = {};
+        breakfastEvent.title = "Breakfast - $" + breakfastCharge.toFixed( 2 );
+        breakfastEvent.start = moment( mealDate );
+        breakfastEvent.end   = moment( mealDate );
 
-            mealEvent.start.hour( 7 );
-            mealEvent.start.minutes( 30 );
+        breakfastEvent.start.hour( 7 );
+        breakfastEvent.start.minutes( 30 );
 
-            mealEvent.end.hour( 8 );
-            mealEvent.end.minutes( 00 );
+        breakfastEvent.end.hour( 8 );
+        breakfastEvent.end.minutes( 00 );
 
-            mealEvents.push( mealEvent );
-        }
+        mealEvents.push( breakfastEvent );
+      }
 
-        if ( lunchCharge > 0 ) {
-            mealEvent.title = "Lunch - $" + lunchCharge.toFixed( 2 );
-            mealEvent.start = moment( mealDate );
-            mealEvent.end   = moment( mealDate );
+      if ( lunchCharge > 0 ) {
+          let lunchEvent = {};
+          lunchEvent.title = "Lunch - $" + lunchCharge.toFixed( 2 );
+          lunchEvent.start = moment( mealDate );
+          lunchEvent.end   = moment( mealDate );
 
-            mealEvent.start.hour( 11 );
-            mealEvent.start.minutes( 30 );
+          lunchEvent.start.hour( 11 );
+          lunchEvent.start.minutes( 30 );
 
-            mealEvent.end.hour( 12 );
-            mealEvent.end.minutes( 00 );
+          lunchEvent.end.hour( 12 );
+          lunchEvent.end.minutes( 00 );
 
-            mealEvents.push( mealEvent );
-        }
+          mealEvents.push( lunchEvent );
+      }
 
-        if ( deposit > 0 ) {
-            depositEvent = {};
+      if ( deposit > 0 ) {
+          let depositEvent = {};
 
-            depositEvent.allDay = true;
-            depositEvent.color  = "green";
-            depositEvent.end    = moment( mealDate );
-            depositEvent.start  = moment( mealDate );
-            depositEvent.title  = "Deposit - $" + deposit.toFixed( 2 );
+          depositEvent.allDay = true;
+          depositEvent.color  = "green";
+          depositEvent.end    = moment( mealDate );
+          depositEvent.start  = moment( mealDate );
+          depositEvent.title  = "Deposit - $" + deposit.toFixed( 2 );
 
-            mealEvents.push( depositEvent );
-        }
-    });
+          mealEvents.push( depositEvent );
+      }
 
-    // Create event for "today" showing current balance
-    var summary      = $( '#ctl00_ContentPlaceHolder1_lblLunchSummary' )[0].innerText,
-        summaryArr   = summary.split('       '),
-        balance      = summaryArr[2].split(':')[1].trim(),
-        balanceAmt   = Number( balance.replace('$', '') ).toFixed( 2 ),
-        balanceEvent = {};
-
-    balanceEvent.allDay = true;
-    balanceEvent.color  = '#0000ff';
-    balanceEvent.start  = moment().format();
-    balanceEvent.title  = "Balance - " + balance;
-
-    if ( balanceAmt < 5 ) {
-        balanceEvent.color = "red";
-    }
-
-    mealEvents.push( balanceEvent );
-
+  });
     return mealEvents;
 }
 
-createCalendarDiv() => {
+function createCalendarDiv() {
+    console.log('create calendar div function');
     var calendarDiv  = document.createElement( 'DIV' );
 
-    calendarDiv.id  = "calendar";
+    calendarDiv.id    = "calendar";
+    calendarDiv.class = 'caley-cal';
 
-    $( '#ctl00_updatePanel1' ).append( calendarDiv );
+    $( '#divChargesDeposits' ).append( calendarDiv );
 
     createFullCalendar();
 }
 
-createFullCalendar() => {
+function createFullCalendar() {
+    console.log('create full calendar function');
     var meals = getMeals();
 
-    // Hide the default grid so our calendar renders at the top
-    $( '#ctl00_dvContent' ).hide();
+    // Hide the default table so our calendar renders at the top
+    $( '#divChargesDeposits > table' ).hide();
 
     $( '#calendar' ).fullCalendar({
         theme: true,
@@ -145,4 +119,14 @@ createFullCalendar() => {
 }
 
 // Execute createCalendarDiv() on DOM ready
-$( document ).ready(() => { createCalendarDiv(); });
+$( document ).ready(() => {
+
+  let intervalID = setInterval(() => {
+    if ( window.location.hash === '#/mealService' ) {
+      if ( $( '#divChargesDeposits > table' ).length > 0 ) {
+        createCalendarDiv();
+        clearInterval( intervalID );
+      }
+    }
+  }, 500);
+});
