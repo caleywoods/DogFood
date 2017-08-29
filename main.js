@@ -87,7 +87,6 @@ function getMeals() {
 }
 
 function createCalendarDiv() {
-    console.log('create calendar div function');
     var calendarDiv  = document.createElement( 'DIV' );
 
     calendarDiv.id    = "calendar";
@@ -99,7 +98,6 @@ function createCalendarDiv() {
 }
 
 function createFullCalendar() {
-    console.log('create full calendar function');
     var meals = getMeals();
 
     // Hide the default table so our calendar renders at the top
@@ -121,12 +119,37 @@ function createFullCalendar() {
 // Execute createCalendarDiv() on DOM ready
 $( document ).ready(() => {
 
+
+  /* This is our initial interval so that we can catch when the URL
+   * fragment turns to #/mealService meaning the user is on the meals page
+   */
   let intervalID = setInterval(() => {
+    /* We've progressed from login to home to mealService, begin checking
+     * the dom for the charges table. This table isn't available the instant
+     * the hash matches so we have to keep checking the length. It will be 0
+     * until the table is in the DOM.
+     */
     if ( window.location.hash === '#/mealService' ) {
+      /* We can now see the charges table, this is sort of like a second
+       * DOM ready since SIS is an angular app. Now that we see the table el
+       * we can do our magic.
+       */
       if ( $( '#divChargesDeposits > table' ).length > 0 ) {
         createCalendarDiv();
+        /* Stop this checking for the URL hash and looking for the charges
+         * table so frequently.
+         */
         clearInterval( intervalID );
+
+        /* Create a new interval that runs every 3 seconds so that switching
+         * between students re-draws the full calendar as it should.
+         */
+        let newInterval = setInterval(() => {
+          if ( $( '#divChargesDeposits > table' ).length > 0 ) {
+            createCalendarDiv();
+          }
+        }, 3000);
       }
     }
-  }, 500);
+  }, 800);
 });
