@@ -4,7 +4,7 @@
 	"short_name": "DogFood",
 	"author": "Caley Woods",
 	"description": "Track the breakfast and lunch meals of your child",
-	"version": "0.0.4",
+	"version": "0.0.5",
 	"content_scripts": [
 		{
 			"matches": [
