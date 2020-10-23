@@ -1,5 +1,5 @@
 function getMeals() {
-    const rows     = [...document.querySelectorAll( '.tableOddRow, .tableEvenRow' )];
+    const rows     = [...document.querySelectorAll('.tableOddRow, .tableEvenRow')];
     let re         = /[\n\r]+/;
     let mealEvents = [];
     let latestBalance;
@@ -11,7 +11,7 @@ function getMeals() {
        *
        * Each piece of data in each element is seperated by a tab character.
        */
-      const rowArr = row.innerText.split( re );
+      const rowArr = row.innerText.split(re);
 
       /* This breaks the first element into a 3 element array in the form of:
        * ["Mon", "08/28/17", ""]
@@ -38,12 +38,15 @@ function getMeals() {
        */
       const transactionDetails = rowArr[1].split('	');
 
-      const breakfastCharge = Number( transactionDetails[0] );
-      const lunchCharge     = Number( transactionDetails[2] );
-      const deposit         = Number( transactionDetails[7] );
-      const dailyBalance    = Number( transactionDetails[10] );
+      const breakfastCharge = Number(transactionDetails[0]);
+      const lunchCharge     = Number(transactionDetails[2]);
+      const deposit         = Number(transactionDetails[7]);
+      const dailyBalance    = Number(transactionDetails[10]);
+      const breakfastWasEaten = breakfastCharge > 0;
+      const lunchWasEaten = lunchCharge > 0;
+      const depositMade = deposit > 0;
 
-      if ( breakfastCharge > 0 ) {
+      if (breakfastWasEaten) {
         const breakfastEvent = {};
 
         breakfastEvent.title = `Breakfast - $${breakfastCharge.toFixed(2)}`;
@@ -54,7 +57,7 @@ function getMeals() {
         mealEvents = [...mealEvents, breakfastEvent];
       }
 
-      if ( lunchCharge > 0 ) {
+      if (lunchWasEaten) {
           const lunchEvent = {};
 
           lunchEvent.title = `Lunch - $${lunchCharge.toFixed(2)}`;
@@ -65,7 +68,7 @@ function getMeals() {
           mealEvents = [...mealEvents, lunchEvent];
       }
 
-      if ( deposit > 0 ) {
+      if (depositMade) {
           const depositEvent = {};
 
           depositEvent.allDay = true;
@@ -77,7 +80,7 @@ function getMeals() {
           mealEvents = [...mealEvents, depositEvent];
       }
 
-      if ( idx === 0 ) {
+      if (idx === 0) {
           latestBalance = dailyBalance;
       }
   });
@@ -97,28 +100,28 @@ function getMeals() {
 }
 
 function createCalendarDiv() {
-    const myCal        = document.querySelector( '.caley-cal' );
+    const myCal = document.querySelector( '.caley-cal' );
     // Bail if the calendar is already on the page
-    if ( myCal !== null ) return;
+    if (myCal !== null) return;
 
-    const calendarDiv  = document.createElement( 'DIV' );
-    const targetDiv    = document.querySelector( '#divChargesDeposits' );
+    const calendarDiv = document.createElement( 'DIV' );
+    const targetDiv = document.querySelector( '#divChargesDeposits' );
 
-    calendarDiv.id    = "calendar";
-    calendarDiv.classList.add( 'caley-cal' );
+    calendarDiv.id = "calendar";
+    calendarDiv.classList.add('caley-cal');
 
-    targetDiv.appendChild( calendarDiv );
+    targetDiv.appendChild(calendarDiv);
     createFullCalendar();
 }
 
 function createFullCalendar() {
     const meals = getMeals();
-    const table = document.querySelector( '#divChargesDeposits > table' );
+    const table = document.querySelector('#divChargesDeposits > table');
 
     // Hide the default table so our calendar renders at the top
     table.style.display = 'none';
 
-    $( '#calendar' ).fullCalendar({
+    $('#calendar').fullCalendar({
         theme: true,
         header: {
             left: 'prev,next today',
@@ -132,12 +135,12 @@ function createFullCalendar() {
 }
 
 // Execute createCalendarDiv() on DOM ready
-$( document ).ready( _ => {
+$(document).ready(_ => {
     /* This is our initial interval so that we can catch when the URL
      * fragment turns to #/mealService meaning the user is on the meals page
     */
-    const intervalID = setInterval( _ => {
-        const table = document.querySelector( '#divChargesDeposits > table' );
+    const intervalID = setInterval(_ => {
+        const table = document.querySelector('#divChargesDeposits > table');
         /* We've progressed from login to home to mealService, begin checking
          * the dom for the charges table. This table isn't available the instant
          * the hash matches so we have to keep checking the length. It will be 0
@@ -148,7 +151,7 @@ $( document ).ready( _ => {
              * DOM ready since SIS is an angular app. Now that we see the table el
              * we can do our magic.
              */
-            if ( table !== null ) {
+            if (table !== null) {
                 createCalendarDiv();
                 /* Stop this checking for the URL hash and looking for the charges
                  * table so frequently.
@@ -158,8 +161,8 @@ $( document ).ready( _ => {
                 /* Create a new interval that runs every 3 seconds so that switching
                  * between students re-draws the full calendar as it should.
                  */
-                const newInterval = setInterval( _ => {
-                    if ( table !== null  ) {
+                const newInterval = setInterval(_ => {
+                    if (table !== null) {
                         createCalendarDiv();
                     }
                 }, 3000);
