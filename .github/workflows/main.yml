@@ -22,7 +22,7 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
       - id: step1
-        run: echo "::set-output name=test::$(echo if [ "$(git log | grep e60ea364d17ff0d92ea8189cf1ee8b4bd40505c0)" != '' ] ; then echo 1; else echo 0 ; fi)"
+        run: echo "::set-output name=test::$(if [ "$(git log | grep e60ea364d17ff0d92ea8189cf1ee8b4bd40505c0)" != '' ] ; then echo 1; else echo 0 ; fi)"
         shell: bash
   check-source-branch:
     runs-on: ubuntu-latest
