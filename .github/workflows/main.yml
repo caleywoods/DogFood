@@ -19,8 +19,10 @@ jobs:
       output1: ${{ steps.step1.outputs.test }}
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
-      - id: step1
-        run: echo "::set-output name=test::$(echo git log | grep e60ea364d17ff0d92ea8189cf1ee8b4bd40505c0)"
-        shell: bash
+      - uses: actions/github-script@v3
+        id: set-result
+        with:
+          script: return "Hello!"
+          result-encoding: string
+      - name: Get result
+        run: echo "${{steps.set-result.outputs.result}}"
