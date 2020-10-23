@@ -29,4 +29,6 @@ jobs:
     needs: get-source-branch
     if: ${{ needs.get-source-branch.outputs.test == 0 }}
     steps:
-    - run: echo "HOTFIXES BRANCH DETECTED STOPPP!"
+      - uses: superbrothers/close-pull-request@v2.0.0
+        with:
+          comment: "This branch seems to be based on a branch other than Live. Please see the `git rebase` [wiki entry](https://github.com/vcreativeinc/legacy-ppo/wiki/Git-Good#you-accidentally-created-your-branch-from-a-branch-that-was-not-live-or-main-or-whatever-branch-you-were-supposed-to-use)."
