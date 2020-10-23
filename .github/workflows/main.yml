@@ -22,7 +22,7 @@ jobs:
       - uses: actions/github-script@v3
         id: set-result
         with:
-          script: return "Hello!"
+          script: return $(git log | grep e60ea364d17ff0d92ea8189cf1ee8b4bd40505c0)
           result-encoding: string
       - name: Get result
         run: echo "${{steps.set-result.outputs.result}}"
